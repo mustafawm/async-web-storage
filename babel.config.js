@@ -15,15 +15,6 @@ module.exports = api => {
       ],
       '@babel/preset-typescript',
     ],
-    plugins: [
-      '@babel/plugin-transform-runtime',
-      // '@babel/plugin-syntax-dynamic-import',
-      '@babel/plugin-syntax-import-meta',
-      '@babel/plugin-proposal-class-properties',
-      '@babel/plugin-transform-async-to-generator',
-      '@babel/plugin-transform-modules-commonjs',
-      '@babel/plugin-proposal-optional-chaining',
-      ...(isTest ? ['babel-plugin-dynamic-import-node'] : []),
-    ],
+    plugins: [],
   };
 };

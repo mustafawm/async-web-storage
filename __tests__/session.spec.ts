@@ -1,90 +1,78 @@
-import storage from '../src';
+import { asyncSessionStorage } from '../src';
 import { person, token } from './consts';
 
 describe('Session Storage', () => {
   beforeAll(() => {
-    storage.session.clear();
+    asyncSessionStorage.clear();
   });
   afterAll(() => {
-    storage.session.clear();
+    asyncSessionStorage.clear();
   });
 
   test('stores, fetches and removes values', async () => {
-    const getObjResult = await storage.session.getItem('person');
+    const getObjResult = await asyncSessionStorage.getItem('person');
     expect(getObjResult).toBeNull();
 
-    const getStrResult = await storage.session.getItem('token');
+    const getStrResult = await asyncSessionStorage.getItem('token');
     expect(getStrResult).toBeNull();
 
-    await storage.session.setItem('person', person);
-    const getObjResult2 = await storage.session.getItem('person');
+    await asyncSessionStorage.setItem('person', person);
+    const getObjResult2 = await asyncSessionStorage.getItem('person');
     expect(getObjResult2).toMatchObject(person);
 
-    await storage.session.setItem('token', token);
-    const getStrResult2 = await storage.session.getItem('token');
+    await asyncSessionStorage.setItem('token', token);
+    const getStrResult2 = await asyncSessionStorage.getItem('token');
     expect(getStrResult2).toBe(token);
 
-    await storage.session.removeItem('person');
-    const delObjResult = await storage.session.getItem('person');
+    await asyncSessionStorage.removeItem('person');
+    const delObjResult = await asyncSessionStorage.getItem('person');
     expect(delObjResult).toBeNull();
 
-    await storage.session.removeItem('token');
-    const delStrResult = await storage.session.getItem('token');
+    await asyncSessionStorage.removeItem('token');
+    const delStrResult = await asyncSessionStorage.getItem('token');
     expect(delStrResult).toBeNull();
   });
 
-  test('executes provided callbacks', async () => {
-    const getObjResultCb = await storage.session.getItem(
+  test('passes raw storage objects to getItem callback', async () => {
+    await asyncSessionStorage.setItem('person', person);
+
+    const rawStoredPerson = await asyncSessionStorage.getItem(
       'person',
-      () => 'nothing',
-    );
-    expect(getObjResultCb).toBe('nothing');
-
-    const setObjResultCb = await storage.session.setItem(
-      'person',
-      person,
-      () => 'done',
-    );
-    await expect(setObjResultCb).toBe('done');
-
-    const setStrResultCb = await storage.session.setItem(
-      'token',
-      token,
-      () => 'done',
-    );
-    expect(setStrResultCb).toBe('done');
-
-    const delObjResultCb = await storage.session.removeItem(
-      'person',
-      () => 'deleted',
-    );
-    expect(delObjResultCb).toBe('deleted');
-
-    const delStrResultCb = await storage.session.removeItem(
-      'token',
-      () => 'gone',
-    );
-    expect(delStrResultCb).toBe('gone');
-  });
-
-  test('passes raw storage objects to callbacks', async () => {
-    await storage.session.setItem('person', person);
-
-    const rawStoredPerson = await storage.session.getItem(
-      'person',
-      (_, res) => res,
+      res => res,
     );
     expect(rawStoredPerson).toHaveProperty('createdAt');
     expect(rawStoredPerson).toHaveProperty('person');
     expect(rawStoredPerson.person).toMatchObject(person);
 
-    await storage.session.setItem('token', token);
-    const rawStoredToken = await storage.session.getItem(
+    await asyncSessionStorage.setItem('token', token);
+    const rawStoredToken = await asyncSessionStorage.getItem(
       'token',
-      (_, res) => res,
+      res => res,
     );
     expect(rawStoredToken).toHaveProperty('createdAt');
     expect(rawStoredToken).toHaveProperty('token');
     expect(rawStoredToken.token).toBe(token);
+  });
+
+  test('handles {}, "", underfined, 0, null', async () => {
+    await asyncSessionStorage.setItem('empty', {});
+    const emptyObjRes = await asyncSessionStorage.getItem('empty');
+    expect(emptyObjRes).toMatchObject({});
+
+    await asyncSessionStorage.setItem('empty', '');
+    const emptyStrRes = await asyncSessionStorage.getItem('empty');
+    expect(emptyStrRes).toBe('');
+
+    await asyncSessionStorage.setItem('empty', undefined);
+    const undefinedRes = await asyncSessionStorage.getItem('empty');
+    expect(undefinedRes).toBe('undefined');
+
+    await asyncSessionStorage.setItem('empty', 0);
+    const zeroResult = await asyncSessionStorage.getItem('empty');
+    expect(zeroResult).toBe(0);
+
+    await asyncSessionStorage.setItem('empty', null);
+    const nullResult = await asyncSessionStorage.getItem('empty');
+    expect(nullResult).toBeNull();
   });
 });

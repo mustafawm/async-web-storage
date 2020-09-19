@@ -1,11 +1,11 @@
-import { valueInType } from './types';
+import { ASValueIn } from './types';
 
 /**
  * Prepares value to be stored (JSON.stringify)
  */
-export function prepareToStore(key: string, value: valueInType): string {
+export function prepareToStore(key: string, value: ASValueIn): string {
   return JSON.stringify({
-    [key]: value,
+    [key]: value === undefined ? 'undefined' : value,
     createdAt: Date.now(),
   });
 }

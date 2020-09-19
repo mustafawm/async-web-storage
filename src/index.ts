@@ -1,6 +1,6 @@
 /* eslint no-console:0 */
 import { prepareToStore, prepareToReturn } from './utils';
-import { AStorageType, ASValueIn, ASValueOut, ASError } from './types';
+import { AStorageType, ASValueIn, ASValueOut } from './types';
 
 class AStorage {
   private type: AStorageType;
@@ -9,37 +9,32 @@ class AStorage {
     this.type = type;
   }
 
-  async setItem(
-    key: string,
-    value: ASValueIn,
-    cb?: (err?: ASError) => void,
-  ): Promise<void | boolean> {
+  async setItem(key: string, value: ASValueIn): Promise<void | boolean> {
     return new Promise((resolve, reject) => {
       try {
         window[this.type].setItem(key, prepareToStore(key, value));
-        resolve(cb ? cb() : true);
+        resolve();
       } catch (error) {
-        reject(cb ? cb(error) : false);
+        reject(error);
       }
     });
   }
 
   async getItem(
     key: string,
-    cb?: (err?: ASError, res?: ASValueOut) => void,
+    cb?: (res: ASValueOut) => void,
   ): Promise<ASValueOut | void> {
     return new Promise((resolve, reject) => {
       try {
         const storedString = window[this.type].getItem(key);
         if (!storedString) {
-          return resolve(cb ? cb(null, storedString) : null);
+          return resolve(cb ? cb(storedString) : storedString);
         }
 
         try {
           const result = JSON.parse(storedString);
-          return resolve(
-            cb ? cb(null, result) : prepareToReturn(result[key] || result),
-          );
+          const value = key in result ? result[key] : result;
+          return resolve(cb ? cb(result) : prepareToReturn(value));
         } catch (parsingErr) {
           // stored value is a string so it can't be JSON.parsed!
           // should NOT happen if the value was stored via this wrapper
@@ -48,21 +43,18 @@ class AStorage {
           return resolve(parsingErr);
         }
       } catch (error) {
-        return reject(cb ? cb(error) : error);
+        return reject(error);
       }
     });
   }
 
-  async removeItem(
-    key: string,
-    cb?: (err?: ASError) => void,
-  ): Promise<void | boolean> {
+  async removeItem(key: string): Promise<void | boolean> {
     return new Promise((resolve, reject) => {
       try {
         window[this.type].removeItem(key);
-        resolve(cb ? cb() : true);
+        resolve();
       } catch (error) {
-        reject(cb ? cb(error) : false);
+        reject(error);
       }
     });
   }
@@ -71,7 +63,7 @@ class AStorage {
     return new Promise((resolve, reject) => {
       try {
         window[this.type].clear();
-        resolve(true);
+        resolve();
       } catch (error) {
         reject(error);
       }
@@ -79,7 +71,5 @@ class AStorage {
   }
 }
 
-export default {
-  local: new AStorage(AStorageType.local),
-  session: new AStorage(AStorageType.session),
-};
+export const asyncLocalStorage = new AStorage(AStorageType.local);
+export const asyncSessionStorage = new AStorage(AStorageType.session);

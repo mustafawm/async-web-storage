@@ -1,90 +1,75 @@
-import storage from '../src';
+import { asyncLocalStorage } from '../src';
 import { person, token } from './consts';
 
 describe('Local Storage', () => {
   beforeAll(() => {
-    storage.local.clear();
+    asyncLocalStorage.clear();
   });
   afterAll(() => {
-    storage.local.clear();
+    asyncLocalStorage.clear();
   });
 
   test('stores, fetches and removes values', async () => {
-    const getObjResult = await storage.local.getItem('person');
+    const getObjResult = await asyncLocalStorage.getItem('person');
     expect(getObjResult).toBeNull();
 
-    const getStrResult = await storage.local.getItem('token');
+    const getStrResult = await asyncLocalStorage.getItem('token');
     expect(getStrResult).toBeNull();
 
-    await storage.local.setItem('person', person);
-    const getObjResult2 = await storage.local.getItem('person');
+    await asyncLocalStorage.setItem('person', person);
+    const getObjResult2 = await asyncLocalStorage.getItem('person');
     expect(getObjResult2).toMatchObject(person);
 
-    await storage.local.setItem('token', token);
-    const getStrResult2 = await storage.local.getItem('token');
+    await asyncLocalStorage.setItem('token', token);
+    const getStrResult2 = await asyncLocalStorage.getItem('token');
     expect(getStrResult2).toBe(token);
 
-    await storage.local.removeItem('person');
-    const delObjResult = await storage.local.getItem('person');
+    await asyncLocalStorage.removeItem('person');
+    const delObjResult = await asyncLocalStorage.getItem('person');
     expect(delObjResult).toBeNull();
 
-    await storage.local.removeItem('token');
-    const delStrResult = await storage.local.getItem('token');
+    await asyncLocalStorage.removeItem('token');
+    const delStrResult = await asyncLocalStorage.getItem('token');
     expect(delStrResult).toBeNull();
   });
 
-  test('executes provided callbacks', async () => {
-    const getObjResultCb = await storage.local.getItem(
+  test('passes raw storage objects to getItem callback', async () => {
+    await asyncLocalStorage.setItem('person', person);
+
+    const rawStoredPerson = await asyncLocalStorage.getItem(
       'person',
-      () => 'nothing',
-    );
-    expect(getObjResultCb).toBe('nothing');
-
-    const setObjResultCb = await storage.local.setItem(
-      'person',
-      person,
-      () => 'done',
-    );
-    await expect(setObjResultCb).toBe('done');
-
-    const setStrResultCb = await storage.local.setItem(
-      'token',
-      token,
-      () => 'done',
-    );
-    expect(setStrResultCb).toBe('done');
-
-    const delObjResultCb = await storage.local.removeItem(
-      'person',
-      () => 'deleted',
-    );
-    expect(delObjResultCb).toBe('deleted');
-
-    const delStrResultCb = await storage.local.removeItem(
-      'token',
-      () => 'gone',
-    );
-    expect(delStrResultCb).toBe('gone');
-  });
-
-  test('passes raw storage objects to callbacks', async () => {
-    await storage.local.setItem('person', person);
-
-    const rawStoredPerson = await storage.local.getItem(
-      'person',
-      (_, res) => res,
+      res => res,
     );
     expect(rawStoredPerson).toHaveProperty('createdAt');
     expect(rawStoredPerson).toHaveProperty('person');
     expect(rawStoredPerson.person).toMatchObject(person);
 
-    await storage.local.setItem('token', token);
-    const rawStoredToken = await storage.local.getItem(
-      'token',
-      (_, res) => res,
-    );
+    await asyncLocalStorage.setItem('token', token);
+    const rawStoredToken = await asyncLocalStorage.getItem('token', res => res);
     expect(rawStoredToken).toHaveProperty('createdAt');
     expect(rawStoredToken).toHaveProperty('token');
     expect(rawStoredToken.token).toBe(token);
+  });
+
+  test('handles {}, "", underfined, 0, null', async () => {
+    await asyncLocalStorage.setItem('empty', {});
+    const emptyObjRes = await asyncLocalStorage.getItem('empty');
+    expect(emptyObjRes).toMatchObject({});
+
+    await asyncLocalStorage.setItem('empty', '');
+    const emptyStrRes = await asyncLocalStorage.getItem('empty');
+    expect(emptyStrRes).toBe('');
+
+    await asyncLocalStorage.setItem('empty', undefined);
+    const undefinedRes = await asyncLocalStorage.getItem('empty');
+    expect(undefinedRes).toBe('undefined');
+
+    await asyncLocalStorage.setItem('empty', 0);
+    const zeroResult = await asyncLocalStorage.getItem('empty');
+    expect(zeroResult).toBe(0);
+
+    await asyncLocalStorage.setItem('empty', null);
+    const nullResult = await asyncLocalStorage.getItem('empty');
+    expect(nullResult).toBeNull();
   });
 });

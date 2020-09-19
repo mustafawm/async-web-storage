@@ -14,7 +14,6 @@
     "resolveJsonModule": true,
     "isolatedModules": false,
     "noEmit": true,
-    "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
       "*": ["src/*"]
@@ -25,6 +24,7 @@
     "node_modules",
     ".babelrc.js",
     "jest.config.js",
-    ".eslintrc.js"
+    ".eslintrc.js",
+    "public"
   ]
 }

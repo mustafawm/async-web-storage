@@ -1,12 +1,22 @@
-import babel from '@rollup/plugin-babel';
 import typescript from '@rollup/plugin-typescript';
+import { terser } from 'rollup-plugin-terser';
 
-export default {
-  input: 'src/index.js',
-  output: {
-    dir: 'dist',
-    file: 'index.js',
-    format: 'cjs',
-  },
-  plugins: [babel({ babelHelpers: 'bundled' }), typescript()],
-};
+const isProd = !process.env.ROLLUP_WATCH;
+
+export default isProd
+  ? {
+      input: './src/index.ts',
+      output: {
+        dir: 'dist',
+        format: 'cjs',
+      },
+      plugins: [typescript(), terser()],
+    }
+  : {
+      input: './public/example.ts',
+      output: {
+        dir: 'public',
+        format: 'cjs',
+      },
+      plugins: [typescript()],
+    };
