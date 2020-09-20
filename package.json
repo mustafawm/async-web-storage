@@ -1,8 +1,10 @@
 {
   "name": "async-web-storage",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "async wrapper for web (local|session) storage",
   "main": "dist/index.js",
+  "homepage": "https://github.com/mustafawm/async-web-storage#readme",
+  "repository": "mustafawm/async-web-storage",
   "scripts": {
     "test": "jest",
     "watch": "rollup -c -w",
