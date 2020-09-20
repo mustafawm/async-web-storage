@@ -1,6 +1,6 @@
 {
   "name": "async-web-storage",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "async wrapper for web (local|session) storage",
   "main": "dist/index.js",
   "scripts": {
