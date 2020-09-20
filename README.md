@@ -1,12 +1,12 @@
 ## Async wrapper for web storage
 
 ```sh
-npm install
+npm install async-web-storage
 ```
 
 ### Example
 ```js
-import { asyncLocalStorage, asyncSessionStorage } from '';
+import { asyncLocalStorage, asyncSessionStorage } from 'async-web-storage';
 
 async function saveLocally() {
   await asyncLocalStorage.setItem('foo', 'bar');
