@@ -1,0 +1,17 @@
+# source code
+__tests__
+.vscode
+.git
+public
+src
+coverage
+
+.eslintrc.js
+.eslintignore
+.gitignore
+.prettierignore
+.prettierrc.json
+babe.config.js
+jest.config.js
+rollup.config.js
+tsconfig.json
