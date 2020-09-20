@@ -36,16 +36,17 @@ describe('Local Storage', () => {
   test('passes raw storage objects to getItem callback', async () => {
     await asyncLocalStorage.setItem('person', person);
 
-    const rawStoredPerson = await asyncLocalStorage.getItem(
-      'person',
-      res => res,
-    );
+    const rawStoredPerson = await asyncLocalStorage.getItem('person', {
+      raw: true,
+    });
     expect(rawStoredPerson).toHaveProperty('createdAt');
     expect(rawStoredPerson).toHaveProperty('person');
     expect(rawStoredPerson.person).toMatchObject(person);
 
     await asyncLocalStorage.setItem('token', token);
-    const rawStoredToken = await asyncLocalStorage.getItem('token', res => res);
+    const rawStoredToken = await asyncLocalStorage.getItem('token', {
+      raw: true,
+    });
     expect(rawStoredToken).toHaveProperty('createdAt');
     expect(rawStoredToken).toHaveProperty('token');
     expect(rawStoredToken.token).toBe(token);

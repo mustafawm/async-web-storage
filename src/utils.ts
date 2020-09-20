@@ -1,9 +1,8 @@
-import { ASValueIn } from './types';
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Prepares value to be stored (JSON.stringify)
  */
-export function prepareToStore(key: string, value: ASValueIn): string {
+export function prepareToStore(key: string, value: any): string {
   return JSON.stringify({
     [key]: value === undefined ? 'undefined' : value,
     createdAt: Date.now(),

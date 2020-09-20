@@ -1,15 +1,20 @@
 {
-  "name": "asyncs",
+  "name": "async-web-storage",
   "version": "1.0.0",
   "description": "async wrapper for web (local|session) storage",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest",
-    "build": "rollup -c",
     "watch": "rollup -c -w",
-    "serve": "serve public",
-    "dev": "npm-run-all --parallel serve watch"
+    "serve": "serve .",
+    "dev": "npm-run-all --parallel serve watch",
+    "build": "rollup -c && tsc --emitDeclarationOnly",
+    "prepublish:public": "npm run build && npm run bump-version",
+    "publish:public": "npm publish --access public"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "async",
     "WebStroage",

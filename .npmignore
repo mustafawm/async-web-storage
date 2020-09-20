@@ -2,7 +2,6 @@
 __tests__
 .vscode
 .git
-public
 src
 coverage
 
@@ -12,6 +11,7 @@ coverage
 .prettierignore
 .prettierrc.json
 babe.config.js
+index.html
 jest.config.js
 rollup.config.js
 tsconfig.json

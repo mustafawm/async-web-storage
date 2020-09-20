@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>async web storage</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <style>
+    .container {
+      width: 20rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    input {
+      padding: .2rem;
+      height: 1.5rem;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: .5rem;
+      padding: .4rem;
+      font-size: large;
+    }
+
+    button:hover {
+      background-color: whitesmoke;
+      cursor: pointer;
+    }
+
+    #local,
+    #session {
+      color: blue;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <input placeholder="Enter text here" id="textfield" required="required" />
+    <button onclick="saveToLocal()">Save it to local storage</button>
+    <button onclick="saveToSession()">Save it to session storage</button>
+    <button onclick="deleteFromLocal()">Delete it from local storage</button>
+    <button onclick="deleteFromSession()">Delete it from session storage</button>
+  </div>
+  <div>
+    <p>Result</p>
+    <div>Local storage value: <span id="local"></span></div>
+    <br />
+    <div>Session storage value: <span id="session"></span></div>
+  </div>
+
+  <script src="./dist/index.js"></script>
+  <script>
+    var asyncLocalStorage = window.asyncWebStorage.asyncLocalStorage;
+    var asyncSessionStorage = window.asyncWebStorage.asyncSessionStorage;
+
+    function getTextFieldValue() {
+      return document.getElementById('textfield').value;
+    }
+
+    async function saveToLocal(run = true) {
+      if (!run) return;
+      const value = getTextFieldValue();
+      await asyncLocalStorage.setItem('field', value);
+      const result = await asyncLocalStorage.getItem('field');
+      document.getElementById('local').innerHTML = result;
+    }
+
+    async function saveToSession(run = true) {
+      if (!run) return;
+      const value = getTextFieldValue();
+      await asyncSessionStorage.setItem('field', value);
+      const result = await asyncSessionStorage.getItem('field');
+      document.getElementById('session').innerHTML = result;
+    }
+
+    async function deleteFromLocal(run = true) {
+      if (!run) return;
+      await asyncLocalStorage.removeItem('field');
+      const result = await asyncLocalStorage.getItem('field');
+      document.getElementById('local').innerHTML = result || '';
+    }
+
+    async function deleteFromSession(run = true) {
+      if (!run) return;
+      await asyncSessionStorage.removeItem('field');
+      const result = await asyncSessionStorage.getItem('field');
+      document.getElementById('session').innerHTML = result || '';
+    }
+  </script>
+</body>
+
+</html>

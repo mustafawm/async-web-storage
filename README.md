@@ -29,10 +29,10 @@ For example, the above values would exisit in local storage like this:
 |user_1  |`"{\"name\":\"mcha\",\"createdAt\":1600516591899}"`
 |        |
 
-To have access to the raw stored objects, pass a callback as a 2nd argument to the `.getItem` function
+To have access to the raw stored objects pass an option object `{raw: true}` as a 2nd argument `.getItem`
 
 ```js
-const rawStoredUser1 = await asyncLocalStorage.getItem('user_1', user => user);
+const rawStoredUser1 = await asyncLocalStorage.getItem('user_1', {raw: true});
 
 console.log(rawStoredUser1); // {name: "mcha", createdAt: 1600516591899}
 ```

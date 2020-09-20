@@ -36,19 +36,17 @@ describe('Session Storage', () => {
   test('passes raw storage objects to getItem callback', async () => {
     await asyncSessionStorage.setItem('person', person);
 
-    const rawStoredPerson = await asyncSessionStorage.getItem(
-      'person',
-      res => res,
-    );
+    const rawStoredPerson = await asyncSessionStorage.getItem('person', {
+      raw: true,
+    });
     expect(rawStoredPerson).toHaveProperty('createdAt');
     expect(rawStoredPerson).toHaveProperty('person');
     expect(rawStoredPerson.person).toMatchObject(person);
 
     await asyncSessionStorage.setItem('token', token);
-    const rawStoredToken = await asyncSessionStorage.getItem(
-      'token',
-      res => res,
-    );
+    const rawStoredToken = await asyncSessionStorage.getItem('token', {
+      raw: true,
+    });
     expect(rawStoredToken).toHaveProperty('createdAt');
     expect(rawStoredToken).toHaveProperty('token');
     expect(rawStoredToken.token).toBe(token);

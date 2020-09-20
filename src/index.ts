@@ -1,6 +1,14 @@
 /* eslint no-console:0 */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prepareToStore, prepareToReturn } from './utils';
-import { AStorageType, ASValueIn, ASValueOut } from './types';
+
+enum AStorageType {
+  local = 'localStorage',
+  session = 'sessionStorage',
+}
+
+type ASValueIn = any;
+type ASValueOut = any;
 
 class AStorage {
   private type: AStorageType;
@@ -22,19 +30,19 @@ class AStorage {
 
   async getItem(
     key: string,
-    cb?: (res: ASValueOut) => void,
+    options?: { raw?: boolean },
   ): Promise<ASValueOut | void> {
     return new Promise((resolve, reject) => {
       try {
         const storedString = window[this.type].getItem(key);
         if (!storedString) {
-          return resolve(cb ? cb(storedString) : storedString);
+          return resolve(storedString);
         }
 
         try {
           const result = JSON.parse(storedString);
           const value = key in result ? result[key] : result;
-          return resolve(cb ? cb(result) : prepareToReturn(value));
+          return resolve(options?.raw ? result : prepareToReturn(value));
         } catch (parsingErr) {
           // stored value is a string so it can't be JSON.parsed!
           // should NOT happen if the value was stored via this wrapper
